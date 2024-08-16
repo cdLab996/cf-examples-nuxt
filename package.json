@@ -1,14 +1,14 @@
 {
-  "name": "nuxt-app",
+  "name": "cf-examples-nuxt",
   "private": true,
   "type": "module",
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
-    "preview": "npm run build && wrangler pages dev",
+    "preview": "pnpm run build && wrangler pages dev",
     "postinstall": "nuxt prepare",
-    "deploy": "npm run build && wrangler pages deploy",
+    "deploy": "pnpm run build && wrangler pages deploy",
     "cf-typegen": "wrangler types"
   },
   "dependencies": {
