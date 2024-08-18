@@ -7,6 +7,9 @@ export default defineNuxtConfig({
   },
   nitro: {
     preset: 'cloudflare-pages',
+    experimental: {
+      wasm: true,
+    },
   },
 
   modules: ['nitro-cloudflare-dev', '@vueuse/nuxt', '@unocss/nuxt', 'nuxt-svgo'],
