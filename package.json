@@ -1,23 +1,35 @@
 {
   "name": "cf-examples-nuxt",
-  "private": true,
   "type": "module",
+  "private": true,
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "pnpm run build && wrangler pages dev",
     "postinstall": "nuxt prepare",
+    "typecheck": "nuxt typecheck",
     "deploy": "pnpm run build && wrangler pages deploy",
-    "cf-typegen": "wrangler types"
-  },
-  "dependencies": {
-    "nuxt": "^3.12.4",
-    "vue": "latest"
+    "cf-typegen": "wrangler types",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --check --write .",
+    "format:fail": "prettier --check ."
   },
   "devDependencies": {
+    "@cdlab996/eslint-config-vue": "0.0.13",
+    "@cdlab996/prettier-config": "0.0.13",
     "@cloudflare/workers-types": "^4.20240815.0",
+    "@unocss/nuxt": "^0.62.2",
+    "@vueuse/nuxt": "^11.0.0",
+    "eslint": "8.57.0",
     "nitro-cloudflare-dev": "^0.1.6",
+    "nuxt": "^3.12.4",
+    "nuxt-svgo": "^4.0.3",
+    "prettier": "3.3.1",
+    "unocss": "^0.62.2",
+    "vue": "latest",
+    "vue-tsc": "latest",
     "wrangler": "^3.71.0"
   }
 }
