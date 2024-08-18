@@ -3,8 +3,9 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "nuxt build",
     "dev": "nuxt dev",
+    "build": "nuxt build",
+    "clean": "bash ./scripts/clean.sh",
     "generate": "nuxt generate",
     "preview": "pnpm run build && wrangler pages dev",
     "postinstall": "nuxt prepare",
@@ -15,6 +16,10 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --check --write .",
     "format:fail": "prettier --check ."
+  },
+  "dependencies": {
+    "@prisma/adapter-d1": "^5.18.0",
+    "@prisma/client": "^5.18.0"
   },
   "devDependencies": {
     "@cdlab996/eslint-config-vue": "0.0.13",
@@ -27,6 +32,7 @@
     "nuxt": "^3.12.4",
     "nuxt-svgo": "^4.0.3",
     "prettier": "3.3.1",
+    "prisma": "^5.18.0",
     "unocss": "^0.62.2",
     "vue": "latest",
     "vue-tsc": "latest",
