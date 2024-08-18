@@ -75,6 +75,14 @@ bun run preview
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
 
 ``` bash
+npm create cloudflare@latest my-nuxt-app -- --framework=nuxt
+
+npm create cloudflare@latest cf-examples-next -- --framework=nuxt
+
+npm create cloudflare@latest cf-examples-next -- --framework=next
+
+cf-examples-next
+
 npx wrangler d1 create prisma-demo-db
 
 npx wrangler d1 migrations create prisma-demo-db create_user_table
@@ -88,7 +96,6 @@ npx wrangler d1 execute prisma-demo-db --command "INSERT INTO \"User\" (\"email\
 ('wudi@prisma.io', 'wudi (Local)');" --local
 npx wrangler d1 execute prisma-demo-db --command "INSERT INTO \"User\" (\"email\", \"name\") VALUES
 ('wudi@prisma.io', 'wudi (Remote)');" --remote
-
 
 npx prisma generate
 ```
