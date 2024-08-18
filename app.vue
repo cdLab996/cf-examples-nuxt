@@ -6,7 +6,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>
+  <div class="flex">
     <NuxtRouteAnnouncer />
     <NuxtWelcome />
   </div>
