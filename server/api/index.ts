@@ -1,18 +1,10 @@
 // import { PrismaClient } from '@prisma/client'
 // import { PrismaD1 } from '@prisma/adapter-d1'
-
-import { createDatabase } from 'db0'
-import cloudflareD1 from 'db0/connectors/cloudflare-d1'
 import Logger from '~/composables/Logger'
 
 export default defineEventHandler(async (event) => {
   try {
-    // const db = useDatabase()
-    const db = createDatabase(
-      cloudflareD1({
-        bindingName: 'DB',
-      })
-    )
+    const db = useDatabase()
 
     const data = await db.sql`SELECT * FROM user`
     Logger.log('🚀 ~ defineEventHandler ~ data:', data)
