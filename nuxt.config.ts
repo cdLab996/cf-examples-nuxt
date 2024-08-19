@@ -9,6 +9,7 @@ export default defineNuxtConfig({
     preset: 'cloudflare-pages',
     experimental: {
       wasm: true,
+      database: true,
     },
     database: {
       // default: {
