@@ -84,10 +84,8 @@ npm create cloudflare@latest cf-examples-next -- --framework=next
 cf-examples-next
 
 npx wrangler d1 create prisma-demo-db
-
 npx wrangler d1 migrations create prisma-demo-db create_user_table
-
-npx prisma migrate diff --from-empty --to-schema-datamodel ./prisma/schema.prisma --script > migrations/0002_create_user_table.sql
+npx prisma migrate diff --from-empty --to-schema-datamodel ./prisma/schema.prisma --script > migrations/0001_create_user_table.sql
 
 npx wrangler d1 migrations apply prisma-demo-db --local
 npx wrangler d1 migrations apply prisma-demo-db --remote
@@ -96,6 +94,18 @@ npx wrangler d1 execute prisma-demo-db --command "INSERT INTO \"User\" (\"email\
 ('wudi@prisma.io', 'wudi (Local)');" --local
 npx wrangler d1 execute prisma-demo-db --command "INSERT INTO \"User\" (\"email\", \"name\") VALUES
 ('wudi@prisma.io', 'wudi (Remote)');" --remote
+
+npx prisma migrate diff \
+  --from-empty \
+  --to-schema-datamodel ./prisma/schema.prisma \
+  --script \
+  --output migrations/0003_create_user_table.sql
+
+npx prisma migrate diff \
+  --from-local-d1 \
+  --to-schema-datamodel ./prisma/schema.prisma \
+  --script \
+  --output migrations/0003_create_post_table.sql
 
 npx prisma generate
 ```
