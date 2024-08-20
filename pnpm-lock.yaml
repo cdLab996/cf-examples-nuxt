@@ -63,6 +63,9 @@ importers:
       vue:
         specifier: latest
         version: 3.4.38(typescript@5.5.4)
+      vue-router:
+        specifier: latest
+        version: 4.4.3(vue@3.4.38(typescript@5.5.4))
       vue-tsc:
         specifier: latest
         version: 2.0.29(typescript@5.5.4)

@@ -38,6 +38,7 @@
     "prisma": "^5.18.0",
     "unocss": "^0.62.2",
     "vue": "latest",
+    "vue-router": "latest",
     "vue-tsc": "latest",
     "wrangler": "^3.71.0"
   }
