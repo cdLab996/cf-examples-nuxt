@@ -18,13 +18,16 @@
     "format:fail": "prettier --check ."
   },
   "dependencies": {
+    "@element-plus/icons-vue": "^2.3.1",
     "@prisma/adapter-d1": "^5.18.0",
-    "@prisma/client": "^5.18.0"
+    "@prisma/client": "^5.18.0",
+    "element-plus": "^2.8.0"
   },
   "devDependencies": {
     "@cdlab996/eslint-config-vue": "0.0.13",
     "@cdlab996/prettier-config": "0.0.13",
     "@cloudflare/workers-types": "^4.20240815.0",
+    "@element-plus/nuxt": "^1.0.9",
     "@unocss/nuxt": "^0.62.2",
     "@vueuse/nuxt": "^11.0.0",
     "eslint": "8.57.0",

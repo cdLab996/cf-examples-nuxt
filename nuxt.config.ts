@@ -21,5 +21,11 @@ export default defineNuxtConfig({
     },
   },
 
-  modules: ['nitro-cloudflare-dev', '@vueuse/nuxt', '@unocss/nuxt', 'nuxt-svgo'],
+  modules: [
+    'nitro-cloudflare-dev',
+    '@vueuse/nuxt',
+    '@unocss/nuxt',
+    '@element-plus/nuxt',
+    'nuxt-svgo',
+  ],
 })
