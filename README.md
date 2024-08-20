@@ -1,87 +1,16 @@
-# Nuxt 3 Minimal Starter
+# cf-examples-nuxt
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Using Nuxt, Cloudflare Pages, Cloudflare D1 Database Demo
 
-## Setup
-
-Make sure to install the dependencies:
-
-```bash
-# npm
-npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm run dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm run build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm run preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
 
 ``` bash
-npm create cloudflare@latest my-nuxt-app -- --framework=nuxt
 
-npm create cloudflare@latest cf-examples-next -- --framework=nuxt
+npm create cloudflare@latest cf-examples-nuxt -- --framework=nuxt
 
-npm create cloudflare@latest cf-examples-next -- --framework=next
+cf-examples-nuxt
 
-cf-examples-next
+pnpm run db:generate
+pnpm run db:migrate:local
 
 pnpm dlx wrangler d1 create prisma-demo-db
 pnpm dlx wrangler d1 migrations create prisma-demo-db create_user_table

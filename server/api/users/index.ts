@@ -10,12 +10,6 @@ export default defineEventHandler(async (event) => {
     const result = await query.all()
     Logger.log('🚀 ~ defineEventHandler ~ result:', result)
 
-    // nitro => SQL Database
-    // const db = useDatabase()
-    // const data = await db.sql`SELECT * FROM user`
-    // Logger.log('🚀 ~ defineEventHandler ~ data:', data)
-    // const result = data.rows?.results || []
-
     return {
       code: 0,
       message: 'ok',
