@@ -29,8 +29,8 @@ ALLOWED_CORS_ORIGINS = "*"
 # Docs: https://developers.cloudflare.com/pages/functions/bindings/#d1-databases
 [[d1_databases]]
 binding = "DB"
-database_name = "drizzle-demo-db"
-database_id = "cc346b5b-f2a6-4e39-ae62-c90e70d3cfcc"
+database_name = "prisma-demo-db"
+database_id = "00e63464-8034-48ce-bcf5-15584a844ffa"
 
 # Bind a Durable Object. Durable objects are a scale-to-zero compute primitive based on the actor model.
 # Durable Objects can live for as long as needed. Use these when you need a long-running "server", such as in realtime apps.
