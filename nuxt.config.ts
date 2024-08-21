@@ -20,6 +20,12 @@ export default defineNuxtConfig({
       },
     },
   },
+  runtimeConfig: {
+    dbType: process.env.NUXT_DB_TYPE,
+    public: {
+      logEnable: process.env.NUXT_LOG_ENABLE,
+    },
+  },
 
   modules: [
     'nitro-cloudflare-dev',

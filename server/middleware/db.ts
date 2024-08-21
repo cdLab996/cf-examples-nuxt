@@ -10,9 +10,9 @@ import { drizzle as drizzleD1 } from 'drizzle-orm/d1'
 import * as schema from '~/db/schema'
 
 function initializeDrizzle(event: H3Event<EventHandlerRequest>) {
-  const { NUXT_DB_TYPE } = process.env
+  const { dbType } = useRuntimeConfig()
 
-  switch (NUXT_DB_TYPE) {
+  switch (dbType) {
     case 'sqlite': {
       const db = useDatabase()
       return drizzleSqlite(db, { schema })
@@ -22,7 +22,7 @@ function initializeDrizzle(event: H3Event<EventHandlerRequest>) {
       return drizzleD1(DB, { schema })
     }
     default: {
-      throw new Error(`Unsupported DB type: ${NUXT_DB_TYPE}`)
+      throw new Error(`Unsupported DB type: ${dbType}`)
     }
   }
 }

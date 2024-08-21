@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
-const { VITE_LOG_ENABLE } = import.meta.env
-
+const {
+  public: { logEnable },
+} = useRuntimeConfig()
 const getTimestamp = () => {
   // const timestamp = new Date().toLocaleString();
   // const timestamp = new Date().toLocaleString() + '.' + new Date().getMilliseconds();
@@ -8,13 +9,13 @@ const getTimestamp = () => {
 }
 
 const logWithTimestamp = (message?: any, ...optionalParams: any[]) => {
-  if (VITE_LOG_ENABLE === 'true') {
+  if (logEnable === 'true') {
     console.log(`[${getTimestamp()}]`, message, ...optionalParams)
   }
 }
 
 const infoWithTimestamp = (message?: any, ...optionalParams: any[]) => {
-  if (VITE_LOG_ENABLE === 'true') {
+  if (logEnable === 'true') {
     console.info(`[${getTimestamp()}]`, message, ...optionalParams)
   }
 }
