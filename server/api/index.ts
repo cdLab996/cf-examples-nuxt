@@ -1,20 +1,20 @@
 import { defineEventHandler } from 'h3'
-import { users } from '~/server/db/schema'
+// import { users } from '~/server/db/schema'
 import Logger from '~/composables/Logger'
 
 export default defineEventHandler(async (event) => {
   try {
-    const db = event.context.db
+    // const db = event.context.db
 
-    const query = db.select().from(users)
-    const result = await query.all()
-    Logger.log('🚀 ~ defineEventHandler ~ result:', result)
+    // const query = db.select().from(users)
+    // const result = await query.all()
+    // Logger.log('🚀 ~ defineEventHandler ~ result:', result)
 
     // nitro => SQL Database
-    // const db = useDatabase()
-    // const data = await db.sql`SELECT * FROM user`
-    // Logger.log('🚀 ~ defineEventHandler ~ data:', data)
-    // const result = data.rows?.results || []
+    const db = useDatabase()
+    const data = await db.sql`SELECT * FROM user`
+    Logger.log('🚀 ~ defineEventHandler ~ data:', data)
+    const result = data.rows?.results || []
 
     return {
       code: 0,

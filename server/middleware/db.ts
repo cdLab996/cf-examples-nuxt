@@ -1,21 +1,24 @@
-import type { DrizzleD1Database } from 'drizzle-orm/d1'
+import { createDatabase } from 'db0'
+import sqlite from 'db0/connectors/better-sqlite3'
+import { drizzle } from 'db0/integrations/drizzle/index'
 
-import { initializeDrizzle } from '../utils/db'
+export function initializeDrizzle() {
+  const db = createDatabase(sqlite({}))
+  return drizzle(db)
+}
 
-let drizzle: ReturnType<typeof initializeDrizzle>
+let drizzleDB: ReturnType<typeof initializeDrizzle>
 
 export default defineEventHandler(async (event) => {
-  const { DB } = event.context.cloudflare.env
-
-  if (!drizzle) {
-    drizzle = initializeDrizzle(DB)
+  if (!drizzleDB) {
+    drizzleDB = initializeDrizzle()
   }
 
-  event.context.db = drizzle
+  event.context.db = drizzleDB
 })
 
 declare module 'h3' {
   interface H3EventContext {
-    db: DrizzleD1Database
+    db: ReturnType<typeof initializeDrizzle>
   }
 }
