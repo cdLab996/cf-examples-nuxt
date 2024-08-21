@@ -89,7 +89,7 @@ export default defineEventHandler(async (event) => {
     }
 
     const db = event.context.db
-    const { result } = await db.insert(users).values(records).returning().all()
+    const result = await db?.insert(users).values(records).returning().all()
     Logger.log('🚀 ~ defineEventHandler ~ result:', result)
 
     return {

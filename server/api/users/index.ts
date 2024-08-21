@@ -8,15 +8,16 @@ export default defineEventHandler(async (event) => {
 
     // const query = db.select().from(users)
     // const result = await query.all()
-    const result = await db.select().from(users).all()
+    const result = await db?.select().from(users).all()
     Logger.log('🚀 ~ defineEventHandler ~ result:', result)
 
     return {
       code: 0,
       message: 'ok',
-      data: result.results,
+      data: result,
     }
   } catch (error) {
+    Logger.error('🚀 ~ defineEventHandler ~ error:', error)
     event.node.res.statusCode = 500
     let errorMessage = 'Internal Server Error'
     if (error instanceof Error) {

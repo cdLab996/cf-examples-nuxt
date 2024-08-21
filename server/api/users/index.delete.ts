@@ -22,8 +22,8 @@ export default defineEventHandler(async (event) => {
     const db = event.context.db
 
     // TODO: In actual business, it shouldn't be deleted, it should just be added with a logo
-    const { result } = await db
-      .delete(users)
+    const result = await db
+      ?.delete(users)
       .where(sql`${users.id} = ${id}`)
       .returning()
       .get()

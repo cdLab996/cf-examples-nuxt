@@ -47,8 +47,8 @@ export default defineEventHandler(async (event) => {
     if (name) updateData.name = name
     if (email) updateData.email = email
 
-    const { result } = await db
-      .update(users)
+    const result = await db
+      ?.update(users)
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
       .set(updateData)
