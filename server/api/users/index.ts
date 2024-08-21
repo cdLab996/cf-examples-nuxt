@@ -6,14 +6,15 @@ export default defineEventHandler(async (event) => {
   try {
     const db = event.context.db
 
-    const query = db.select().from(users)
-    const result = await query.all()
+    // const query = db.select().from(users)
+    // const result = await query.all()
+    const result = await db.select().from(users).all()
     Logger.log('🚀 ~ defineEventHandler ~ result:', result)
 
     return {
       code: 0,
       message: 'ok',
-      data: result,
+      data: result.results,
     }
   } catch (error) {
     event.node.res.statusCode = 500
