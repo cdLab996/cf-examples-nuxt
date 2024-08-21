@@ -1,9 +1,7 @@
-import { createDatabase } from 'db0'
-import sqlite from 'db0/connectors/better-sqlite3'
 import { drizzle } from 'db0/integrations/drizzle/index'
 
 export function initializeDrizzle() {
-  const db = createDatabase(sqlite({}))
+  const db = useDatabase()
   return drizzle(db)
 }
 
