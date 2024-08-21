@@ -3,8 +3,8 @@ import { defineConfig } from 'drizzle-kit'
 const { VITE_D1_TOKEN, VITE_ACCOUNT_ID, VITE_DATABASE_ID } = process.env
 
 export default defineConfig({
-  schema: './server/db/schema.ts',
-  out: './server/db/migrations',
+  schema: './db/schema.ts',
+  out: './db/migrations',
   dialect: 'sqlite',
   driver: 'd1-http',
   dbCredentials: {

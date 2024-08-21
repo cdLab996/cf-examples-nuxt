@@ -1,5 +1,5 @@
 import { readBody } from 'h3'
-import { users } from '~/server/db/schema'
+import { users } from '~/db/schema'
 import { isValidEmail } from '~/server/utils/validate'
 import Logger from '~/composables/Logger'
 
@@ -89,7 +89,7 @@ export default defineEventHandler(async (event) => {
     }
 
     const db = event.context.db
-    const result = await db.insert(users).values(records).returning().all()
+    const { result } = await db.insert(users).values(records).returning().all()
     Logger.log('🚀 ~ defineEventHandler ~ result:', result)
 
     return {

@@ -1,6 +1,6 @@
 import { readBody, defineEventHandler } from 'h3'
 import { sql } from 'drizzle-orm'
-import { users } from '~/server/db/schema'
+import { users } from '~/db/schema'
 import { isValidEmail } from '~/server/utils/validate'
 import Logger from '~/composables/Logger'
 
@@ -47,7 +47,7 @@ export default defineEventHandler(async (event) => {
     if (name) updateData.name = name
     if (email) updateData.email = email
 
-    const result = await db
+    const { result } = await db
       .update(users)
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error

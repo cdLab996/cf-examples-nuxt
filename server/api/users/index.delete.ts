@@ -1,6 +1,6 @@
 import { readBody, defineEventHandler } from 'h3'
 import { sql } from 'drizzle-orm'
-import { users } from '~/server/db/schema'
+import { users } from '~/db/schema'
 import Logger from '~/composables/Logger'
 
 interface Query {
@@ -22,7 +22,7 @@ export default defineEventHandler(async (event) => {
     const db = event.context.db
 
     // TODO: In actual business, it shouldn't be deleted, it should just be added with a logo
-    const result = await db
+    const { result } = await db
       .delete(users)
       .where(sql`${users.id} = ${id}`)
       .returning()

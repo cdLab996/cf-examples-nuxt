@@ -1,5 +1,5 @@
 import { defineEventHandler } from 'h3'
-import { users } from '~/server/db/schema'
+import { users } from '~/db/schema'
 import Logger from '~/composables/Logger'
 
 export default defineEventHandler(async (event) => {
