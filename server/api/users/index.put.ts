@@ -1,7 +1,7 @@
 import { readBody, defineEventHandler } from 'h3'
 import { sql } from 'drizzle-orm'
-import { users } from '~/db/schema'
-import { isValidEmail } from '~/server/utils/validate'
+import { users } from '~~/db/schema'
+import { isValidEmail } from '~~/server/utils/validate'
 
 interface Query {
   id: string

@@ -1,6 +1,6 @@
 import { readBody, defineEventHandler } from 'h3'
 import { sql } from 'drizzle-orm'
-import { users } from '~/db/schema'
+import { users } from '~~/db/schema'
 
 interface Query {
   id: string

@@ -1,5 +1,5 @@
 import { defineEventHandler } from 'h3'
-import { users } from '~/db/schema'
+import { users } from '~~/db/schema'
 
 export default defineEventHandler(async (event) => {
   const { db, logger } = event.context

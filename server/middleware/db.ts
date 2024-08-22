@@ -7,7 +7,7 @@
 import type { H3Event, EventHandlerRequest } from 'h3'
 import { drizzle as drizzleSqlite } from 'drizzle-orm/libsql'
 import { drizzle as drizzleD1 } from 'drizzle-orm/d1'
-import * as schema from '~/db/schema'
+import * as schema from '~~/db/schema'
 
 function initializeDrizzle(event: H3Event<EventHandlerRequest>) {
   const { dbType } = useRuntimeConfig()

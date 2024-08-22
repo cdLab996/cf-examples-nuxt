@@ -1,6 +1,6 @@
 import { readBody } from 'h3'
-import { users } from '~/db/schema'
-import { isValidEmail } from '~/server/utils/validate'
+import { users } from '~~/db/schema'
+import { isValidEmail } from '~~/server/utils/validate'
 
 interface Query {
   name: string
