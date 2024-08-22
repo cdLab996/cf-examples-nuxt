@@ -2,7 +2,6 @@ import { readBody, defineEventHandler } from 'h3'
 import { sql } from 'drizzle-orm'
 import { users } from '~/db/schema'
 import { isValidEmail } from '~/server/utils/validate'
-import { serverLog } from '~/composables/logger'
 
 interface Query {
   id: string
@@ -12,6 +11,7 @@ interface Query {
 
 export default defineEventHandler(async (event) => {
   try {
+    const { db, logger } = event.context
     const { id, name, email } = await readBody<Query>(event)
 
     if (!id) {
@@ -41,8 +41,6 @@ export default defineEventHandler(async (event) => {
       }
     }
 
-    const db = event.context.db
-
     const updateData: Partial<Query> = {}
     if (name) updateData.name = name
     if (email) updateData.email = email
@@ -56,7 +54,7 @@ export default defineEventHandler(async (event) => {
       .returning()
       .get()
 
-    serverLog.log('🚀 ~ defineEventHandler ~ result:', result)
+    logger.log('🚀 ~ defineEventHandler ~ result:', result)
 
     if (!result) {
       event.node.res.statusCode = 404

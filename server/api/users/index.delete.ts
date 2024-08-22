@@ -1,13 +1,13 @@
 import { readBody, defineEventHandler } from 'h3'
 import { sql } from 'drizzle-orm'
 import { users } from '~/db/schema'
-import { serverLog } from '~/composables/logger'
 
 interface Query {
   id: string
 }
 
 export default defineEventHandler(async (event) => {
+  const { logger } = event.context
   try {
     const { id } = await readBody<Query>(event)
 
@@ -28,7 +28,7 @@ export default defineEventHandler(async (event) => {
       .returning()
       .get()
 
-    serverLog.log('🚀 ~ defineEventHandler ~ result:', result)
+    logger.log('🚀 ~ defineEventHandler ~ result:', result)
 
     if (!result) {
       event.node.res.statusCode = 404

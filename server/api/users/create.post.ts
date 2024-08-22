@@ -1,7 +1,6 @@
 import { readBody } from 'h3'
 import { users } from '~/db/schema'
 import { isValidEmail } from '~/server/utils/validate'
-import { serverLog } from '~/composables/logger'
 
 interface Query {
   name: string
@@ -61,6 +60,7 @@ function validateAndPrepareData(data: Query): ValidationResult {
 }
 
 export default defineEventHandler(async (event) => {
+  const { logger } = event.context
   try {
     const body = await readBody<Query | Query[]>(event)
 
@@ -90,7 +90,7 @@ export default defineEventHandler(async (event) => {
 
     const db = event.context.db
     const result = await db?.insert(users).values(records).returning().all()
-    serverLog.log('🚀 ~ defineEventHandler ~ result:', result)
+    logger.log('🚀 ~ defineEventHandler ~ result:', result)
 
     return {
       code: 0,
