@@ -1,22 +1,13 @@
-import { defineEventHandler, getRequestURL } from 'h3'
-import { consola } from 'consola'
-import type { ConsolaInstance } from 'consola'
-
-const createLoggerWithTimestamp = (tag: string) =>
-  consola.withTag(
-    `${tag}: ${new Date().toLocaleString()}.${new Date().getMilliseconds()}`
-  )
-
-const serverLog = createLoggerWithTimestamp('server-log')
+import logger from '../utils/logger'
 
 export default defineEventHandler((event) => {
-  serverLog.log('New request: ' + getRequestURL(event))
+  logger.log('New request: ' + getRequestURL(event))
 
-  event.context.logger = serverLog
+  event.context.logger = logger
 })
 
 declare module 'h3' {
   interface H3EventContext {
-    logger: ConsolaInstance
+    logger: any
   }
 }

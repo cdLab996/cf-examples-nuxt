@@ -7,8 +7,7 @@ import {
 } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import type { FormInstance, FormRules } from 'element-plus'
-// import { clientLog } from '~/composables/logger'
-import { clientLog } from '../composables/logger'
+import logger from '../composables/logger'
 
 interface User {
   id: number
@@ -58,7 +57,7 @@ async function fetchApiData(url: string, options = {}) {
     }
     return response
   } catch (error) {
-    clientLog.error('Error fetching data:', error)
+    logger.error('Error fetching data:', error)
     throw error
   }
 }
