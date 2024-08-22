@@ -1,6 +1,6 @@
 import { defineEventHandler } from 'h3'
 import { users } from '~/db/schema'
-import Logger from '~/composables/Logger'
+import { serverLog } from '~/composables/logger'
 
 export default defineEventHandler(async (event) => {
   try {
@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
     // const query = db.select().from(users)
     // const result = await query.all()
     const result = await db?.select().from(users).all()
-    Logger.log('🚀 ~ defineEventHandler ~ result:', result)
+    serverLog.log('🚀 ~ defineEventHandler ~ result:', result)
 
     return {
       code: 0,
@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
       data: result,
     }
   } catch (error) {
-    Logger.error('🚀 ~ defineEventHandler ~ error:', error)
+    serverLog.error('🚀 ~ defineEventHandler ~ error:', error)
     event.node.res.statusCode = 500
     let errorMessage = 'Internal Server Error'
     if (error instanceof Error) {

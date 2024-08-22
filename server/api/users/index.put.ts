@@ -2,7 +2,7 @@ import { readBody, defineEventHandler } from 'h3'
 import { sql } from 'drizzle-orm'
 import { users } from '~/db/schema'
 import { isValidEmail } from '~/server/utils/validate'
-import Logger from '~/composables/Logger'
+import { serverLog } from '~/composables/logger'
 
 interface Query {
   id: string
@@ -56,7 +56,7 @@ export default defineEventHandler(async (event) => {
       .returning()
       .get()
 
-    Logger.log('🚀 ~ defineEventHandler ~ result:', result)
+    serverLog.log('🚀 ~ defineEventHandler ~ result:', result)
 
     if (!result) {
       event.node.res.statusCode = 404
