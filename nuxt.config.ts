@@ -6,9 +6,9 @@ export default defineNuxtConfig({
   future: { compatibilityVersion: 4 },
 
   devtools: { enabled: true },
-  imports: {
-    dirs: ['./composables/*', './composables/**/*'],
-  },
+  // imports: {
+  //   dirs: ['./composables/*', './composables/**/*'],
+  // },
   nitro: {
     preset: 'cloudflare-pages',
     experimental: {

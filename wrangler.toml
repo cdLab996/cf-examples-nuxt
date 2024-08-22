@@ -17,7 +17,6 @@ compatibility_flags = ["nodejs_compat"]
 # Note: Use secrets to store sensitive data.
 # - https://developers.cloudflare.com/pages/functions/bindings/#secrets
 [vars]
-NUXT_LOG_ENABLE = true
 NUXT_DB_TYPE = "cf"
 REDIRECT_URL = "https://cf-examples-nuxt.pages.dev/"
 ALLOWED_CORS_ORIGINS = "*"
