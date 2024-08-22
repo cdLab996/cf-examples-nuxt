@@ -7,7 +7,8 @@ import {
 } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import type { FormInstance, FormRules } from 'element-plus'
-import { clientLog } from '~/composables/logger'
+// import { clientLog } from '~/composables/logger'
+import { clientLog } from '../composables/logger'
 
 interface User {
   id: number

@@ -7,7 +7,7 @@ export default defineNuxtConfig({
 
   devtools: { enabled: true },
   // imports: {
-  //   dirs: ['./composables/*', './composables/**/*'],
+  //   dirs: ['./app/composables/*', './app/composables/**/*'],
   // },
   nitro: {
     preset: 'cloudflare-pages',
