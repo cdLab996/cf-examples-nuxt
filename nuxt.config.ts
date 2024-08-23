@@ -12,7 +12,7 @@ export default defineNuxtConfig({
   nitro: {
     preset: 'cloudflare-pages',
     experimental: {
-      // wasm: true,
+      wasm: true,
       database: true,
     },
     database: {
@@ -29,11 +29,5 @@ export default defineNuxtConfig({
     public: {},
   },
 
-  modules: [
-    'nitro-cloudflare-dev',
-    '@vueuse/nuxt',
-    '@unocss/nuxt',
-    '@element-plus/nuxt',
-    'nuxt-svgo',
-  ],
+  modules: ['nitro-cloudflare-dev', '@vueuse/nuxt', '@unocss/nuxt', '@element-plus/nuxt'],
 })
