@@ -24,31 +24,27 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
-    "@prisma/adapter-d1": "^5.18.0",
-    "@prisma/client": "^5.18.0",
-    "better-sqlite3": "^11.2.0",
+    "better-sqlite3": "^11.2.1",
     "db0": "^0.1.4",
     "drizzle-orm": "^0.33.0",
-    "element-plus": "^2.8.0"
+    "element-plus": "^2.8.0",
+    "nuxt": "^3.13.0",
+    "vue": "latest",
+    "vue-router": "latest"
   },
   "devDependencies": {
     "@cdlab996/eslint-config-vue": "0.0.13",
     "@cdlab996/prettier-config": "0.0.13",
-    "@cloudflare/workers-types": "^4.20240815.0",
+    "@cloudflare/workers-types": "^4.20240821.1",
     "@element-plus/nuxt": "^1.0.9",
     "@unocss/nuxt": "^0.62.2",
-    "@vueuse/nuxt": "^11.0.0",
+    "@vueuse/nuxt": "^11.0.1",
     "drizzle-kit": "^0.24.0",
     "eslint": "8.57.0",
     "nitro-cloudflare-dev": "^0.1.6",
-    "nuxt": "^3.12.4",
-    "nuxt-svgo": "^4.0.3",
     "prettier": "3.3.1",
-    "prisma": "^5.18.0",
     "unocss": "^0.62.2",
-    "vue": "latest",
-    "vue-router": "latest",
     "vue-tsc": "latest",
-    "wrangler": "^3.71.0"
+    "wrangler": "^3.72.2"
   }
 }
