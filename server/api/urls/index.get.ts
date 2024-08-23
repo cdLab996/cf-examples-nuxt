@@ -1,19 +1,18 @@
 import { defineEventHandler } from 'h3'
-import { users } from '~~/db/schema'
+import { urls } from '~~/db/schema'
 
 export default defineEventHandler(async (event) => {
   const { db, logger } = event.context
-  logger.log('🚀 ~ defineEventHandler ~ event.context:', event.context)
+
   try {
-    // const query = db.select().from(users)
-    // const result = await query.all()
-    const result = await db?.select().from(users).all()
-    logger.log('🚀 ~ defineEventHandler ~ result:', result)
+    const allUrls = await db.select().from(urls).all()
+
+    logger.log('🚀 ~ defineEventHandler ~ allUrls:', allUrls)
 
     return {
       code: 0,
       message: 'ok',
-      data: result,
+      data: allUrls,
     }
   } catch (error) {
     logger.error('🚀 ~ defineEventHandler ~ error:', error)

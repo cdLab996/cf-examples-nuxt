@@ -26,6 +26,7 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     dbType: process.env.NUXT_DB_TYPE,
+    redirectUrl: process.env.NUXT_REDIRECT_URL,
     public: {},
   },
 

@@ -23,6 +23,9 @@ importers:
       element-plus:
         specifier: ^2.8.0
         version: 2.8.0(vue@3.4.38(typescript@5.5.4))
+      nanoid:
+        specifier: ^5.0.7
+        version: 5.0.7
       nuxt:
         specifier: ^3.13.0
         version: 3.13.0(@parcel/watcher@2.4.1)(@types/node@22.3.0)(better-sqlite3@11.2.1)(drizzle-orm@0.33.0(@cloudflare/workers-types@4.20240821.1)(@prisma/client@5.18.0(prisma@5.18.0))(better-sqlite3@11.2.1)(prisma@5.18.0))(eslint@8.57.0)(ioredis@5.4.1)(magicast@0.3.4)(optionator@0.9.4)(rollup@4.20.0)(terser@5.31.6)(typescript@5.5.4)(vite@5.4.2(@types/node@22.3.0)(terser@5.31.6))(vue-tsc@2.0.29(typescript@5.5.4))
@@ -32,6 +35,9 @@ importers:
       vue-router:
         specifier: latest
         version: 4.4.3(vue@3.4.38(typescript@5.5.4))
+      zod:
+        specifier: ^3.23.8
+        version: 3.23.8
     devDependencies:
       '@cdlab996/eslint-config-vue':
         specifier: 0.0.13

@@ -15,6 +15,13 @@
       "when": 1724142491532,
       "tag": "0001_clever_nightshade",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1724403697385,
+      "tag": "0002_living_sentry",
+      "breakpoints": true
     }
   ]
 }
