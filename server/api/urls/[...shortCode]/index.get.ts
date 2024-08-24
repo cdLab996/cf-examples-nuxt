@@ -31,7 +31,7 @@ export default defineEventHandler(async (event) => {
 
     // 查询数据库中的短码信息
     const urlData = await db
-      .select()
+      ?.select()
       .from(urls)
       .where(eq(urls.shortCode, shortCode))
       .get()
@@ -49,7 +49,7 @@ export default defineEventHandler(async (event) => {
 
     // 检查是否已过期
     if (expirationDate && Date.now() > expirationDate) {
-      await db.delete(urls).where(eq(urls.shortCode, shortCode)).run()
+      await db?.delete(urls).where(eq(urls.shortCode, shortCode)).run()
       logger.warn('Short code expired and deleted:', shortCode)
       event.node.res.statusCode = 404
       return {
@@ -67,7 +67,7 @@ export default defineEventHandler(async (event) => {
     const newClickCount = (currentClickCount?.clickCount || 0) + 1
 
     await db
-      .update(urlAnalytics)
+      ?.update(urlAnalytics)
       .set({ clickCount: newClickCount })
       .where(eq(urlAnalytics.shortCode, shortCode))
       .run()

@@ -5,7 +5,7 @@ export default defineEventHandler(async (event) => {
   const { db, logger } = event.context
 
   try {
-    const allUrls = await db.select().from(urls).all()
+    const allUrls = await db?.select().from(urls).all()
 
     logger.log('🚀 ~ defineEventHandler ~ allUrls:', allUrls)
 

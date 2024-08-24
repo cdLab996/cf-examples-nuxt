@@ -60,7 +60,7 @@ function validateAndPrepareData(data: Query): ValidationResult {
 }
 
 export default defineEventHandler(async (event) => {
-  const { logger } = event.context
+  const { db, logger } = event.context
   try {
     const body = await readBody<Query | Query[]>(event)
 
@@ -88,7 +88,6 @@ export default defineEventHandler(async (event) => {
       }
     }
 
-    const db = event.context.db
     const result = await db?.insert(users).values(records).returning().all()
     logger.log('🚀 ~ defineEventHandler ~ result:', result)
 

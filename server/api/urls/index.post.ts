@@ -22,7 +22,7 @@ export default defineEventHandler(async (event) => {
       : await fetchOpenGraphMetadata(url)
 
     // 检查 URL 是否已经存在
-    const existingUrl = await db.select().from(urls).where(eq(urls.url, url)).get()
+    const existingUrl = await db?.select().from(urls).where(eq(urls.url, url)).get()
     logger.log('🚀 ~ defineEventHandler ~ redirectUrl:', redirectUrl)
     logger.log('🚀 ~ defineEventHandler ~ existingUrl:', existingUrl)
 
@@ -39,7 +39,7 @@ export default defineEventHandler(async (event) => {
     // Check if custom code already exists
     if (customCode) {
       const customCodeExists = await db
-        .select()
+        ?.select()
         .from(urls)
         .where(eq(urls.shortCode, customCode))
         .get()
@@ -58,7 +58,7 @@ export default defineEventHandler(async (event) => {
     const shortCode = customCode || generateShortCode()
     const expirationDate = expiresIn ? Math.floor(Date.now() / 1000) + expiresIn : null
 
-    await db.insert(urls).values({
+    await db?.insert(urls).values({
       shortCode,
       url,
       expirationDate,

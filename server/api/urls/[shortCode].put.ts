@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
 
     // 查找是否存在对应的短码
     const existingUrl = await db
-      .select()
+      ?.select()
       .from(urls)
       .where(eq(urls.shortCode, shortCode))
       .get()
@@ -31,7 +31,7 @@ export default defineEventHandler(async (event) => {
     }
 
     // 更新短码对应的 URL
-    await db.update(urls).set({ url }).where(eq(urls.shortCode, shortCode)).run()
+    await db?.update(urls).set({ url }).where(eq(urls.shortCode, shortCode)).run()
 
     logger.log('URL updated successfully for short code:', shortCode)
 

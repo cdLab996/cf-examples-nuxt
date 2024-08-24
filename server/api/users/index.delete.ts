@@ -7,7 +7,7 @@ interface Query {
 }
 
 export default defineEventHandler(async (event) => {
-  const { logger } = event.context
+  const { db, logger } = event.context
   try {
     const { id } = await readBody<Query>(event)
 
@@ -18,8 +18,6 @@ export default defineEventHandler(async (event) => {
         message: 'Missing ID in request body',
       }
     }
-
-    const db = event.context.db
 
     // TODO: In actual business, it shouldn't be deleted, it should just be added with a logo
     const result = await db

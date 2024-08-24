@@ -23,7 +23,7 @@ export default defineEventHandler(async (event) => {
 
     // 查找数据库中是否存在对应的短码
     const urlData = await db
-      .select()
+      ?.select()
       .from(urls)
       .where(eq(urls.shortCode, shortCode))
       .get()
