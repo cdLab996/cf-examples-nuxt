@@ -11,8 +11,7 @@ import logger from '../composables/logger'
 
 interface User {
   id: number
-  name?: string
-  email?: string
+  url?: string
 }
 
 interface Urls {
@@ -36,27 +35,26 @@ const isLoadingTable = ref(false)
 const urlsList = ref<Urls[]>([])
 const isDialogVisible = ref(false)
 const userFormRef = ref<FormInstance>()
-const userForm = ref<User>({
-  id: 0,
-  name: '',
-  email: '',
+const userForm = ref({
+  url: '',
 })
 const isSubmitting = ref(false)
 
 const validationRules = reactive<FormRules<User>>({
-  name: [{ required: true, message: 'Please input name', trigger: 'blur' }],
-  email: [
-    { required: true, message: 'Please input email address', trigger: 'blur' },
-    {
-      type: 'email',
-      message: 'Please input correct email address',
-      trigger: ['blur', 'change'],
-    },
-  ],
+  url: [{ required: true, message: 'Please input url', trigger: 'blur' }],
+  // email: [
+  //   { required: true, message: 'Please input email address', trigger: 'blur' },
+  //   {
+  //     type: 'email',
+  //     message: 'Please input correct email address',
+  //     trigger: ['blur', 'change'],
+  //   },
+  // ],
 })
 
 // Computed
-const isEditingUser = computed(() => !!userForm.value.id)
+// const isEditingUser = computed(() => !!userForm.value.id)
+const isEditingUser = computed(() => !true)
 
 // Functions
 async function fetchApiData(url: string, options = {}) {
@@ -87,19 +85,16 @@ async function submitUserForm() {
   isSubmitting.value = true
   try {
     if (!userFormRef.value) return
-
     await userFormRef.value.validate(async (isValid) => {
       if (isValid) {
-        const apiUrl = isEditingUser.value ? '/api/urls' : '/api/urls/create'
+        const apiUrl = isEditingUser.value ? '/api/urls' : '/api/urls'
         const httpMethod = isEditingUser.value ? 'PUT' : 'POST'
-
         await fetchApiData(apiUrl, {
           method: httpMethod,
           body: {
             ...userForm.value,
           },
         })
-
         ElMessage.success(`${isEditingUser.value ? 'Edit' : 'Create'} completed`)
         isDialogVisible.value = false
         await loadUserData()
@@ -111,15 +106,15 @@ async function submitUserForm() {
 }
 
 function openUserDialog(user?: User) {
-  userForm.value = user
-    ? {
-        ...user,
-      }
-    : {
-        id: 0,
-        name: '',
-        email: '',
-      }
+  // userForm.value = user
+  //   ? {
+  //       ...user,
+  //     }
+  //   : {
+  //       id: 0,
+  //       name: '',
+  //       email: '',
+  //     }
   isDialogVisible.value = true
 }
 
@@ -194,12 +189,12 @@ loadUserData()
       label-width="auto"
       style="max-width: 600px"
     >
-      <el-form-item label="Name" prop="name">
-        <el-input v-model="userForm.name" />
+      <el-form-item label="Url" prop="url">
+        <el-input v-model="userForm.url" />
       </el-form-item>
-      <el-form-item label="Email" prop="email">
+      <!-- <el-form-item label="Email" prop="email">
         <el-input v-model="userForm.email" />
-      </el-form-item>
+      </el-form-item> -->
     </el-form>
     <template #footer>
       <div class="dialog-footer">
