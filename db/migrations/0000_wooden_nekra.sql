@@ -21,6 +21,12 @@ CREATE TABLE `urls` (
 	`og_image` text DEFAULT 'https://via.placeholder.com/1200x630?text=No+Image'
 );
 --> statement-breakpoint
+CREATE TABLE `users` (
+	`id` integer PRIMARY KEY NOT NULL,
+	`name` text NOT NULL,
+	`email` text NOT NULL
+);
+--> statement-breakpoint
 CREATE UNIQUE INDEX `api_keys_api_key_unique` ON `api_keys` (`api_key`);--> statement-breakpoint
 CREATE UNIQUE INDEX `urls_short_code_unique` ON `urls` (`short_code`);--> statement-breakpoint
 CREATE UNIQUE INDEX `users_email_unique` ON `users` (`email`);

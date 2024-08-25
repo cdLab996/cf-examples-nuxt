@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1724139448130,
-      "tag": "0000_hard_silver_sable",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1724142491532,
-      "tag": "0001_clever_nightshade",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1724403697385,
-      "tag": "0002_living_sentry",
+      "when": 1724569071141,
+      "tag": "0000_wooden_nekra",
       "breakpoints": true
     }
   ]

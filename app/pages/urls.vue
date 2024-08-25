@@ -4,14 +4,15 @@ import {
   Refresh as IconRefresh,
   Plus as IconPlus,
   Edit as IconEdit,
+  Promotion as IconPromotion,
 } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import type { FormInstance, FormRules } from 'element-plus'
 import logger from '../composables/logger'
 
 interface User {
-  id: number
-  url?: string
+  // id: number
+  url: string
 }
 
 interface Urls {
@@ -29,6 +30,11 @@ interface ApiResponse {
   data: Urls[]
   message: string
 }
+
+const {
+  public: { redirectUrl },
+} = useRuntimeConfig()
+logger.log('🚀 ~ redirectUrl:', redirectUrl)
 
 // Variables
 const isLoadingTable = ref(false)
@@ -105,16 +111,19 @@ async function submitUserForm() {
   }
 }
 
+function handleSortUrl(shortCode: string) {
+  window.open(`${redirectUrl}/${shortCode}`, '_blank')
+}
+
 function openUserDialog(user?: User) {
-  // userForm.value = user
-  //   ? {
-  //       ...user,
-  //     }
-  //   : {
-  //       id: 0,
-  //       name: '',
-  //       email: '',
-  //     }
+  userForm.value = user
+    ? {
+        ...user,
+      }
+    : {
+        // id: 0,
+        url: '',
+      }
   isDialogVisible.value = true
 }
 
@@ -166,6 +175,14 @@ loadUserData()
     </el-table-column>
     <el-table-column fixed="right" label="Operations" min-width="120">
       <template #default="{ row }">
+        <el-button
+          tag="a"
+          type="primary"
+          :icon="IconPromotion"
+          :href="`${redirectUrl}/api/urls/u/${row.shortCode}`"
+          target="_blank"
+          circle
+        />
         <el-button type="primary" :icon="IconEdit" circle @click="openUserDialog(row)" />
         <el-button
           type="danger"
