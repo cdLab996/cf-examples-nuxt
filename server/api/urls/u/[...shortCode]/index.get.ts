@@ -2,15 +2,12 @@ import { defineEventHandler } from 'h3'
 import { eq } from 'drizzle-orm'
 import { urls, urlAnalytics } from '~~/db/schema'
 
-interface Query {
-  shortCode: string
-}
-
 export default defineEventHandler(async (event) => {
   const { db, logger } = event.context
 
   try {
     const shortCode = event.context.params?.shortCode
+    logger.warn('🚀 ~ defineEventHandler ~ shortCode:', shortCode)
 
     if (!shortCode) {
       logger.warn('Short code not provided')
@@ -58,19 +55,38 @@ export default defineEventHandler(async (event) => {
       }
     }
 
-    // 更新点击计数
+    // 查询当前点击次数
     const currentClickCount = await db
       ?.select()
       .from(urlAnalytics)
       .where(eq(urlAnalytics.shortCode, shortCode))
       .get()
-    const newClickCount = (currentClickCount?.clickCount || 0) + 1
 
-    await db
-      ?.update(urlAnalytics)
-      .set({ clickCount: newClickCount })
-      .where(eq(urlAnalytics.shortCode, shortCode))
-      .run()
+    if (!currentClickCount) {
+      // 如果不存在点击次数，插入新的记录
+      await db
+        ?.insert(urlAnalytics)
+        .values({
+          shortCode,
+          clickCount: 1,
+        })
+        .run()
+      logger.log('Inserted new analytics record for:', shortCode)
+    } else {
+      // 否则更新现有记录的点击次数
+      const newClickCount = (currentClickCount?.clickCount || 0) + 1
+      await db
+        ?.update(urlAnalytics)
+        .set({ clickCount: newClickCount })
+        .where(eq(urlAnalytics.shortCode, shortCode))
+        .run()
+      logger.log(
+        'Updated analytics record for:',
+        shortCode,
+        'with new click count:',
+        newClickCount
+      )
+    }
 
     // 重定向到目标 URL
     return sendRedirect(event, url, 302)
