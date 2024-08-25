@@ -1,10 +1,6 @@
-import { defineEventHandler, getQuery } from 'h3'
+import { defineEventHandler } from 'h3'
 import { urls } from '~~/db/schema'
 import { eq } from 'drizzle-orm'
-
-interface Query {
-  shortCode: string
-}
 
 function escapeHtml(unsafe: string): string {
   return unsafe
@@ -19,7 +15,16 @@ export default defineEventHandler(async (event) => {
   const { db, logger } = event.context
 
   try {
-    const { shortCode } = getQuery<Query>(event)
+    const shortCode = event.context.params?.shortCode
+
+    if (!shortCode) {
+      logger.warn('Short code not provided')
+      event.node.res.statusCode = 400
+      return {
+        code: 400,
+        message: 'Short code not provided',
+      }
+    }
 
     // 查找数据库中是否存在对应的短码
     const urlData = await db
