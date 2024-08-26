@@ -3,7 +3,7 @@ import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 export const users = sqliteTable('users', {
   id: integer('id').primaryKey(),
   name: text('name').notNull(),
-  email: text('email').notNull().unique(), // 添加 unique 约束，确保邮箱唯一
+  email: text('email').notNull().unique(),
 })
 
 export const urls = sqliteTable('urls', {
@@ -20,7 +20,7 @@ export const urlAnalytics = sqliteTable('url_analytics', {
   id: integer('id').primaryKey(),
   shortCode: text('short_code')
     .notNull()
-    .references(() => urls.shortCode),
+    .references(() => urls.shortCode, { onDelete: 'cascade' }),
   clickCount: integer('click_count').default(0),
 })
 
