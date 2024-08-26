@@ -1,7 +1,11 @@
+import { defineEventHandler, getRequestURL } from 'h3'
 import logger from '../utils/logger'
 
 export default defineEventHandler((event) => {
-  logger.log('New request: ' + getRequestURL(event))
+  const { method } = event.node.req
+  const url = getRequestURL(event)
+
+  logger.info(`New request: ${method} ${url}`)
 
   event.context.logger = logger
 })

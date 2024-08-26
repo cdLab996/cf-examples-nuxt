@@ -7,28 +7,42 @@ export default defineEventHandler(async (event) => {
   const { redirectUrl } = useRuntimeConfig()
   const { db, logger } = event.context
 
-  try {
-    // 获取请求体中的数据
-    const body = await readBody(event)
-    const { url, customCode, expiresIn, ogTitle, ogDescription, ogImage } = body
+  const prefix = `${redirectUrl}/api/urls/u`
 
-    // 获取 OpenGraph 元数据，如果请求中没有提供
+  try {
+    const body = await readBody(event)
+    const {
+      url,
+      shortCode: customCode,
+      expiresIn,
+      ogTitle,
+      ogDescription,
+      ogImage,
+    } = body
+
+    // 获取或解析 OpenGraph 元数据
+    const ogMetadata =
+      ogTitle && ogDescription && ogImage
+        ? { ogTitle, ogDescription, ogImage }
+        : await fetchOpenGraphMetadata(url)
+
     const {
       ogTitle: finalOgTitle,
       ogDescription: finalOgDescription,
       ogImage: finalOgImage,
-    } = ogTitle && ogDescription && ogImage
-      ? { ogTitle, ogDescription, ogImage }
-      : await fetchOpenGraphMetadata(url)
+    } = ogMetadata
 
-    // 检查 URL 是否已经存在
-    const existingUrl = await db?.select().from(urls).where(eq(urls.url, url)).get()
-    logger.log('🚀 ~ defineEventHandler ~ redirectUrl:', redirectUrl)
-    logger.log('🚀 ~ defineEventHandler ~ existingUrl:', existingUrl)
+    // 检查 URL 或自定义短码是否已存在
+    const [existingUrl, customCodeExists] = await Promise.all([
+      db?.select().from(urls).where(eq(urls.url, url)).get(),
+      customCode
+        ? db?.select().from(urls).where(eq(urls.shortCode, customCode)).get()
+        : null,
+    ])
 
     if (existingUrl) {
-      const shortUrl = `${redirectUrl}/${existingUrl.shortCode}`
-      logger.log('URL already exists, returning existing short URL:', shortUrl)
+      const shortUrl = `${prefix}/${existingUrl.shortCode}`
+      logger.warn('URL already exists, returning existing short URL:', shortUrl)
       return {
         code: 0,
         message: 'ok',
@@ -36,38 +50,23 @@ export default defineEventHandler(async (event) => {
       }
     }
 
-    // Check if custom code already exists
-    if (customCode) {
-      const customCodeExists = await db
-        ?.select()
-        .from(urls)
-        .where(eq(urls.shortCode, customCode))
-        .get()
-
-      if (customCodeExists) {
-        logger.warn('Custom code already exists:', customCode)
-        return {
-          code: 409,
-          message: 'Custom code already exists',
-          data: null,
-        }
-      }
+    if (customCodeExists) {
+      logger.warn('Custom code already exists:', customCode)
+      return { code: 409, message: 'Custom code already exists', data: null }
     }
 
-    // 生成短码并插入数据库
     const shortCode = customCode || generateShortCode()
-    const expirationDate = expiresIn ? Math.floor(Date.now() / 1000) + expiresIn : null
 
     await db?.insert(urls).values({
       shortCode,
       url,
-      expirationDate,
+      expirationDate: expiresIn,
       ogTitle: finalOgTitle,
       ogDescription: finalOgDescription,
       ogImage: finalOgImage,
     })
 
-    const shortUrl = `${redirectUrl}/${shortCode}`
+    const shortUrl = `${prefix}/${shortCode}`
     logger.log('New URL created with short code:', shortUrl)
 
     return {

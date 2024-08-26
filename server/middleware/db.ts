@@ -1,9 +1,3 @@
-// import { drizzle } from 'db0/integrations/drizzle/index'
-
-// export function initializeDrizzle() {
-//   const db = useDatabase()
-//   return drizzle(db)
-// }
 import type { H3Event, EventHandlerRequest } from 'h3'
 import { drizzle as drizzleSqlite } from 'drizzle-orm/libsql'
 import { drizzle as drizzleD1 } from 'drizzle-orm/d1'

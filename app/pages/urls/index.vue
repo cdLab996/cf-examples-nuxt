@@ -6,13 +6,16 @@ import {
   Edit as IconEdit,
   Promotion as IconPromotion,
 } from '@element-plus/icons-vue'
+import type { FormItemRule, FormInstance } from 'element-plus'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import type { FormInstance, FormRules } from 'element-plus'
+import dayjs from 'dayjs'
 import logger from '~~/app/composables/logger'
 
-interface User {
-  // id: number
+interface Url {
+  id: number
   url: string
+  shortCode?: string
+  expiresIn?: string
 }
 
 interface Urls {
@@ -31,6 +34,8 @@ interface ApiResponse {
   message: string
 }
 
+type LoadingCallback = () => Promise<void>
+
 const {
   public: { redirectUrl },
 } = useRuntimeConfig()
@@ -41,48 +46,48 @@ const isLoadingTable = ref(false)
 const urlsList = ref<Urls[]>([])
 const isDialogVisible = ref(false)
 const userFormRef = ref<FormInstance>()
-const userForm = ref({
+const urlsForm = ref<Url>({
+  id: 0,
   url: '',
+  shortCode: '',
+  expiresIn: '',
 })
 const isSubmitting = ref(false)
 
-const validationRules = reactive<FormRules<User>>({
-  url: [{ required: true, message: 'Please input url', trigger: 'blur' }],
-  // email: [
-  //   { required: true, message: 'Please input email address', trigger: 'blur' },
-  //   {
-  //     type: 'email',
-  //     message: 'Please input correct email address',
-  //     trigger: ['blur', 'change'],
-  //   },
-  // ],
-})
-
 // Computed
-// const isEditingUser = computed(() => !!userForm.value.id)
-const isEditingUser = computed(() => !true)
+const isEditingUser = computed(() => !!urlsForm.value.id)
 
 // Functions
-async function fetchApiData(url: string, options = {}) {
+async function loadUrlsData() {
+  await handleLoading(async () => {
+    const { data } = await $fetch<ApiResponse>('/api/urls')
+
+    urlsList.value = data || []
+  })
+}
+
+async function handleLoading(callback: LoadingCallback) {
+  isLoadingTable.value = true
   try {
-    const response = await $fetch<ApiResponse>(url, options)
-    if (response.code !== 0) {
-      ElMessage.error(response.message)
-    }
-    return response
-  } catch (error) {
-    logger.error('Error fetching data:', error)
-    throw error
+    await callback()
+  } finally {
+    isLoadingTable.value = false
   }
 }
 
-async function loadUserData() {
-  isLoadingTable.value = true
-  try {
-    const { data } = await fetchApiData('/api/urls')
-    urlsList.value = data || []
-  } finally {
-    isLoadingTable.value = false
+function expandChange() {}
+
+// 表单规则验证函数
+const validateCustomCode: FormItemRule['validator'] = (rule, value, callback) => {
+  // function validateCustomCode(rule, value, callback) {
+  if (value && !/^[A-Za-z0-9]{6}$/.test(value)) {
+    callback(
+      new Error(
+        'Custom code must be 6 characters long and can only contain letters and numbers'
+      )
+    )
+  } else {
+    callback()
   }
 }
 
@@ -91,19 +96,12 @@ async function submitUserForm() {
   isSubmitting.value = true
   try {
     if (!userFormRef.value) return
-    await userFormRef.value.validate(async (isValid) => {
+    await userFormRef.value.validate(async (isValid: boolean) => {
       if (isValid) {
-        const apiUrl = isEditingUser.value ? '/api/urls' : '/api/urls'
-        const httpMethod = isEditingUser.value ? 'PUT' : 'POST'
-        await fetchApiData(apiUrl, {
-          method: httpMethod,
-          body: {
-            ...userForm.value,
-          },
-        })
+        await saveOrUpdateUrl()
         ElMessage.success(`${isEditingUser.value ? 'Edit' : 'Create'} completed`)
         isDialogVisible.value = false
-        await loadUserData()
+        await loadUrlsData()
       }
     })
   } finally {
@@ -111,55 +109,114 @@ async function submitUserForm() {
   }
 }
 
-function handleSortUrl(shortCode: string) {
-  window.open(`${redirectUrl}/${shortCode}`, '_blank')
+async function saveOrUpdateUrl() {
+  const apiUrl = '/api/urls'
+  const httpMethod = isEditingUser.value ? 'PUT' : 'POST'
+  await $fetch<ApiResponse>(apiUrl, {
+    method: httpMethod,
+    body: {
+      ...urlsForm.value,
+    },
+  })
 }
 
-function openUserDialog(user?: User) {
-  userForm.value = user
+function openUserDialog(urlRow?: Url) {
+  urlsForm.value = urlRow
     ? {
-        ...user,
+        id: urlRow.id,
+        url: urlRow.url,
+        shortCode: urlRow.shortCode,
+        expiresIn: dayjs(urlRow.expiresIn).format('YYYY-MM-DD HH:mm:ss'),
       }
     : {
-        // id: 0,
+        id: 0,
         url: '',
+        shortCode: '',
+        expiresIn: dayjs().add(30, 'minute').format('YYYY-MM-DD HH:mm:ss'),
       }
   isDialogVisible.value = true
 }
 
-function confirmUserDeletion(userId: number) {
+function confirmUserDeletion(shortCodeId: number) {
   ElMessageBox.confirm('Please confirm whether to delete data?', 'Warning', {
     confirmButtonText: 'OK',
     cancelButtonText: 'Cancel',
     type: 'warning',
   })
     .then(async () => {
-      await fetchApiData('/api/urls', {
-        method: 'DELETE',
-        body: {
-          id: userId,
-        },
-      })
-      ElMessage.success('Delete completed')
-      await loadUserData()
+      await deleteUrl(shortCodeId)
+      await loadUrlsData()
     })
     .catch(() => {})
 }
 
+async function deleteUrl(shortCodeId: number) {
+  const { code, message } = await $fetch<ApiResponse>('/api/urls', {
+    method: 'DELETE',
+    body: { id: shortCodeId },
+  })
+  code === 0 && ElMessage.success(message || 'Delete completed')
+}
+
+function disabledDate(time: Date) {
+  return time.getTime() < Date.now() - 24 * 60 * 60 * 1000
+}
+
+function disabledTimeHandler(unit: 'hour' | 'minute' | 'second'): number[] {
+  const now = new Date()
+  const selectedDate = new Date(urlsForm.value.expiresIn || '')
+  const selectedDateOnly = selectedDate.toDateString()
+
+  if (selectedDateOnly !== now.toDateString()) return []
+
+  const handlers: Record<'hour' | 'minute' | 'second', () => number[]> = {
+    hour: () => [...Array(now.getHours()).keys()],
+    minute: () =>
+      selectedDate.getHours() === now.getHours()
+        ? [...Array(now.getMinutes()).keys()]
+        : [],
+    second: () =>
+      selectedDate.getHours() === now.getHours() &&
+      selectedDate.getMinutes() === now.getMinutes()
+        ? [...Array(now.getSeconds()).keys()]
+        : [],
+  }
+
+  return handlers[unit]()
+}
+
 // Initial data load
-loadUserData()
+loadUrlsData()
 </script>
 
 <template>
   <div class="rounded py-2 px-4">
-    <el-button type="primary" :icon="IconRefresh" circle @click="loadUserData" />
+    <el-button type="primary" :icon="IconRefresh" circle @click="loadUrlsData" />
     <el-button type="primary" :icon="IconPlus" circle @click="openUserDialog()" />
   </div>
-  <el-table v-loading="isLoadingTable" :data="urlsList">
-    <el-table-column prop="id" label="ID" min-width="60" />
-    <el-table-column prop="shortCode" label="shortCode" min-width="120" />
+  <el-table v-loading="isLoadingTable" :data="urlsList" @expand-change="expandChange">
+    <el-table-column type="expand">
+      <template #default="props">
+        <div m="4">
+          <p m="t-0 b-2">State: {{ props.row.state }}</p>
+          <p m="t-0 b-2">City: {{ props.row.city }}</p>
+          <p m="t-0 b-2">Address: {{ props.row.address }}</p>
+          <p m="t-0 b-2">Zip: {{ props.row.zip }}</p>
+        </div>
+      </template>
+    </el-table-column>
+    <el-table-column fixed="left" align="center" prop="id" label="ID" width="80" />
+    <el-table-column prop="shortCode" label="shortCode" width="120" />
     <el-table-column prop="url" label="url" min-width="120" />
-    <el-table-column prop="expirationDate" label="expirationDate" min-width="120" />
+    <el-table-column
+      prop="expirationDate"
+      label="expirationDate"
+      min-width="120"
+      :formatter="
+        ({ expirationDate }) =>
+          expirationDate ? dayjs(expirationDate).format('YYYY-MM-DD HH:mm:ss') : ''
+      "
+    />
     <el-table-column prop="ogTitle" label="ogTitle" min-width="120" />
     <el-table-column prop="ogDescription" label="ogDescription" min-width="120" />
 
@@ -202,17 +259,54 @@ loadUserData()
   >
     <el-form
       ref="userFormRef"
-      :model="userForm"
-      :rules="validationRules"
+      :model="urlsForm"
       label-width="auto"
       style="max-width: 600px"
     >
-      <el-form-item label="Url" prop="url">
-        <el-input v-model="userForm.url" />
+      <el-form-item
+        label="Url"
+        prop="url"
+        :rules="[{ required: true, message: 'Please input url', trigger: 'blur' }]"
+      >
+        <el-input
+          v-model="urlsForm.url"
+          placeholder="Please input url"
+          clearable
+          :disabled="isEditingUser"
+        />
       </el-form-item>
-      <!-- <el-form-item label="Email" prop="email">
-        <el-input v-model="userForm.email" />
-      </el-form-item> -->
+      <el-form-item
+        label="Short Code"
+        prop="shortCode"
+        :rules="[
+          {
+            required: false,
+            validator: validateCustomCode,
+            trigger: 'blur',
+          },
+        ]"
+      >
+        <el-input
+          v-model="urlsForm.shortCode"
+          placeholder="Please input shortCode"
+          maxlength="6"
+          show-word-limit
+          clearable
+        />
+      </el-form-item>
+      <el-form-item label="Expiration Date" prop="expiresIn">
+        <el-date-picker
+          v-model="urlsForm.expiresIn"
+          type="datetime"
+          placeholder="Select expiration date and time"
+          format="YYYY/MM/DD HH:mm:ss"
+          value-format="x"
+          :disabled-date="disabledDate"
+          :disabled-hours="() => disabledTimeHandler('hour')"
+          :disabled-minutes="() => disabledTimeHandler('minute')"
+          :disabled-seconds="() => disabledTimeHandler('second')"
+        />
+      </el-form-item>
     </el-form>
     <template #footer>
       <div class="dialog-footer">
