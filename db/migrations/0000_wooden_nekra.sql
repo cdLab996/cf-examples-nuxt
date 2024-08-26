@@ -1,17 +1,17 @@
-CREATE TABLE `api_keys` (
+CREATE TABLE IF NOT EXISTS `api_keys` (
 	`id` integer PRIMARY KEY NOT NULL,
 	`api_key` text NOT NULL,
 	`description` text DEFAULT ''
 );
 --> statement-breakpoint
-CREATE TABLE `url_analytics` (
+CREATE TABLE IF NOT EXISTS `url_analytics` (
 	`id` integer PRIMARY KEY NOT NULL,
 	`short_code` text NOT NULL,
 	`click_count` integer DEFAULT 0,
 	FOREIGN KEY (`short_code`) REFERENCES `urls`(`short_code`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
-CREATE TABLE `urls` (
+CREATE TABLE IF NOT EXISTS `urls` (
 	`id` integer PRIMARY KEY NOT NULL,
 	`short_code` text NOT NULL,
 	`url` text NOT NULL,
@@ -21,7 +21,7 @@ CREATE TABLE `urls` (
 	`og_image` text DEFAULT 'https://via.placeholder.com/1200x630?text=No+Image'
 );
 --> statement-breakpoint
-CREATE TABLE `users` (
+CREATE TABLE IF NOT EXISTS `users` (
 	`id` integer PRIMARY KEY NOT NULL,
 	`name` text NOT NULL,
 	`email` text NOT NULL
