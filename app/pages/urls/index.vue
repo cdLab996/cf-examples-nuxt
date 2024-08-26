@@ -195,7 +195,7 @@ loadUrlsData()
     <el-button type="primary" :icon="IconPlus" circle @click="openUserDialog()" />
   </div>
   <el-table v-loading="isLoadingTable" :data="urlsList" @expand-change="expandChange">
-    <el-table-column type="expand">
+    <el-table-column fixed="left" align="center" type="expand">
       <template #default="props">
         <div m="4">
           <p m="t-0 b-2">State: {{ props.row.state }}</p>
