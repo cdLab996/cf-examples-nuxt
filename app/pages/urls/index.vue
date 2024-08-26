@@ -170,6 +170,7 @@ loadUserData()
           fit="cover"
           :src="scope.row.ogImage"
           :preview-src-list="[scope.row.ogImage]"
+          preview-teleported
         />
       </template>
     </el-table-column>
