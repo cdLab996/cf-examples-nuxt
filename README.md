@@ -1,9 +1,44 @@
 # cf-examples-nuxt
 
-Using Nuxt, Cloudflare Pages, Cloudflare D1 Database Demo
+A simple and efficient full-stack URL shortener built with Nuxt, TypeScript, and Cloudflare Pages, seamlessly integrating with Cloudflare D1 Database.
 
+## Getting Started
 
-``` bash
+First, set up your `.env` file by copying the example:
+
+```bash
+cd cf-examples-nuxt
+cp .env.example .env
+```
+
+Then, run the development server:
+
+Recommended versions:
+
+- node ^20.16.0
+- pnpm ^9.7.1
+
+```bash
+pnpm install
+
+pnpm run db:generate
+pnpm run db:up
+pnpm run db:migrate
+
+pnpm run dev
+
+# dev cf preview
+pnpm run dev
+
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+REST API URL:
+
+- api: `/server`
+
+<!-- ``` bash
 
 npm create cloudflare@latest cf-examples-nuxt -- --framework=nuxt
 
@@ -37,4 +72,4 @@ pnpm dlx prisma migrate diff \
   --output migrations/0003_create_post_table.sql
 
 pnpm dlx prisma generate
-```
+``` -->

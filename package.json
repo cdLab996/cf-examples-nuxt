@@ -1,7 +1,10 @@
 {
-  "name": "cf-examples-nuxt",
+  "name": "@cdlab996/cf-examples-nuxt",
   "type": "module",
-  "private": true,
+  "version": "0.4.4",
+  "description": "A simple, efficient URL shortener using Nuxt, TypeScript, and Cloudflare Pages with D1 Database integration.",
+  "author": "wudi",
+  "license": "MIT",
   "scripts": {
     "dev": "nuxt dev",
     "build": "nuxt build",
@@ -15,10 +18,6 @@
     "db:generate": "drizzle-kit generate",
     "db:up": "drizzle-kit up",
     "db:migrate": "drizzle-kit migrate",
-    "db:execute:local": "wrangler d1 execute prismya-demo-db --local --file=./db/migrations/0000_wooden_nekra.sql",
-    "db:execute:remote": "wrangler d1 execute prisma-demo-db --remote --file=./db/migrations/0000_wooden_nekra.sql",
-    "db:migrate:local": "wrangler d1 migrations apply prisma-demo-db --local",
-    "db:migrate:remote": "wrangler d1 migrations apply prisma-demo-db --remote",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --check --write .",
