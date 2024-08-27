@@ -50,7 +50,13 @@ export default defineEventHandler(async (event) => {
         throw new Error('Short code already exists')
       }
 
-      // TODO?: 删除 urlAnalytics 表中的相关记录以避免外键约束失败
+      /**
+       * why
+       *
+       * TODO?: 删除 urlAnalytics 表中的相关记录以避免外键约束失败
+       *
+       * https://github.com/drizzle-team/drizzle-orm/issues/2463
+       */
       await db
         ?.delete(urlAnalytics)
         .where(eq(urlAnalytics.shortCode, existingUrl.shortCode))
