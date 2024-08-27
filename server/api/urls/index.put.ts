@@ -25,45 +25,58 @@ export default defineEventHandler(async (event) => {
       }
     }
 
-    await db?.transaction(async (tx) => {
-      const existingUrl = await tx.select().from(urls).where(eq(urls.id, id)).get()
+    const existingUrl = await db?.select().from(urls).where(eq(urls.id, id)).get()
 
-      if (!existingUrl) {
-        logger.warn('ID not found:', id)
-        event.node.res.statusCode = 404
-        throw new Error('ID not found')
+    if (!existingUrl) {
+      logger.warn('ID not found:', id)
+      event.node.res.statusCode = 404
+      return {
+        code: 404,
+        message: 'ID not found',
+        data: null,
+      }
+    }
+
+    if (existingUrl.shortCode !== shortCode) {
+      const shortCodeExists = await db
+        ?.select()
+        .from(urls)
+        .where(eq(urls.shortCode, shortCode))
+        .get()
+
+      if (shortCodeExists) {
+        logger.warn('Short code already exists:', shortCode)
+        event.node.res.statusCode = 409 // Conflict
+        throw new Error('Short code already exists')
       }
 
-      if (existingUrl.shortCode !== shortCode) {
-        const shortCodeExists = await tx
-          .select()
-          .from(urls)
-          .where(eq(urls.shortCode, shortCode))
-          .get()
+      // TODO?: 删除 urlAnalytics 表中的相关记录以避免外键约束失败
+      await db
+        ?.delete(urlAnalytics)
+        .where(eq(urlAnalytics.shortCode, existingUrl.shortCode))
+        .run()
+    }
 
-        if (shortCodeExists) {
-          logger.warn('Short code already exists:', shortCode)
-          event.node.res.statusCode = 409 // Conflict
-          throw new Error('Short code already exists')
-        }
+    const updateData: Partial<{ shortCode: string; expirationDate?: number }> = {
+      shortCode,
+    }
 
-        await tx
-          .update(urlAnalytics)
-          .set({ shortCode })
-          .where(eq(urlAnalytics.shortCode, existingUrl.shortCode))
-          .run()
-      }
+    if (expiresIn) {
+      updateData.expirationDate = Number.parseInt(expiresIn)
+    }
 
-      const updateData: Partial<{ shortCode: string; expirationDate?: number }> = {
-        shortCode,
-      }
+    await db?.update(urls).set(updateData).where(eq(urls.id, id)).run()
 
-      if (expiresIn) {
-        updateData.expirationDate = Number.parseInt(expiresIn)
-      }
-
-      await tx.update(urls).set(updateData).where(eq(urls.id, id)).run()
-    })
+    if (existingUrl.shortCode !== shortCode) {
+      // 重新插入 urlAnalytics 表中的记录
+      await db
+        ?.insert(urlAnalytics)
+        .values({
+          shortCode,
+          clickCount: 0, // 默认 clickCount
+        })
+        .run()
+    }
 
     logger.log('Short code and expiration date updated successfully for ID:', id)
 
