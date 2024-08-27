@@ -160,23 +160,25 @@ function openUserDialog(urlRow?: Url) {
   isDialogVisible.value = true
 }
 
-function confirmUserDeletion(shortCodeId: number) {
+function confirmUserDeletion(shortCode: string) {
+  if (!shortCode) return
+
   ElMessageBox.confirm('Please confirm whether to delete data?', 'Warning', {
     confirmButtonText: 'OK',
     cancelButtonText: 'Cancel',
     type: 'warning',
   })
     .then(async () => {
-      await deleteUrl(shortCodeId)
+      await deleteUrl(shortCode)
       await loadUrlsData()
     })
     .catch(() => {})
 }
 
-async function deleteUrl(shortCodeId: number) {
+async function deleteUrl(shortCode: string) {
   const { code, message } = await $fetch<ApiResponse>('/api/urls', {
     method: 'DELETE',
-    body: { id: shortCodeId },
+    body: { shortCode },
   })
   code === 0 && ElMessage.success(message || 'Delete completed')
 }
@@ -273,7 +275,7 @@ loadUrlsData()
           type="danger"
           :icon="IconDelete"
           circle
-          @click="confirmUserDeletion(row.id)"
+          @click="confirmUserDeletion(row.shortCode)"
         />
       </template>
     </el-table-column>
