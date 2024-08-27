@@ -1,4 +1,4 @@
-import { defineEventHandler } from 'h3'
+import { defineEventHandler, getRouterParam } from 'h3'
 import { eq } from 'drizzle-orm'
 import { urlAnalytics } from '~~/db/schema'
 
@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
   const { db, logger } = event.context
 
   try {
-    const shortCode = event.context.params?.shortCode
+    const shortCode = getRouterParam(event, 'shortCode')
 
     if (!shortCode) {
       logger.warn('Short code not provided')
@@ -17,28 +17,34 @@ export default defineEventHandler(async (event) => {
       }
     }
 
-    // 查询该短链接的点击次数
-    const result = await db
-      ?.select({
-        clickCount: urlAnalytics.clickCount,
-      })
+    const analytics = await db
+      ?.select()
       .from(urlAnalytics)
       .where(eq(urlAnalytics.shortCode, shortCode))
       .get()
 
-    const clickCount = result?.clickCount || 0
+    const clickCount = analytics?.clickCount || 0
+
+    logger.log(`🚀 ~ Analytics for shortCode ${shortCode}:`, { clickCount })
 
     return {
       code: 0,
       message: 'ok',
-      data: { shortCode, clickCount },
+      data: {
+        shortCode,
+        clickCount,
+      },
     }
   } catch (error) {
-    logger.error('Error fetching analytics for short code:', error)
     event.node.res.statusCode = 500
+    let errorMessage = 'Internal Server Error'
+    if (error instanceof Error) {
+      errorMessage = error.message
+    }
+
     return {
       code: 500,
-      message: 'Internal Server Error',
+      message: errorMessage,
       data: null,
     }
   }

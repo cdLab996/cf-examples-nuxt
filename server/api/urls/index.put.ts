@@ -25,6 +25,11 @@ export default defineEventHandler(async (event) => {
       }
     }
 
+    /**
+     * why no use transaction
+     *
+     * https://github.com/drizzle-team/drizzle-orm/issues/2463
+     */
     const existingUrl = await db?.select().from(urls).where(eq(urls.id, id)).get()
 
     if (!existingUrl) {
@@ -36,6 +41,8 @@ export default defineEventHandler(async (event) => {
         data: null,
       }
     }
+
+    let previousClickCount = 0
 
     if (existingUrl.shortCode !== shortCode) {
       const shortCodeExists = await db
@@ -50,17 +57,22 @@ export default defineEventHandler(async (event) => {
         throw new Error('Short code already exists')
       }
 
-      /**
-       * why
-       *
-       * TODO?: 删除 urlAnalytics 表中的相关记录以避免外键约束失败
-       *
-       * https://github.com/drizzle-team/drizzle-orm/issues/2463
-       */
-      await db
-        ?.delete(urlAnalytics)
+      // 获取当前的 clickCount 并保存为 previousClickCount
+      const analytics = await db
+        ?.select()
+        .from(urlAnalytics)
         .where(eq(urlAnalytics.shortCode, existingUrl.shortCode))
-        .run()
+        .get()
+
+      if (analytics) {
+        previousClickCount = analytics?.clickCount || 0
+
+        // 删除 urlAnalytics 表中的相关记录以避免外键约束失败
+        await db
+          ?.delete(urlAnalytics)
+          .where(eq(urlAnalytics.shortCode, existingUrl.shortCode))
+          .run()
+      }
     }
 
     const updateData: Partial<{ shortCode: string; expirationDate?: number }> = {
@@ -79,7 +91,7 @@ export default defineEventHandler(async (event) => {
         ?.insert(urlAnalytics)
         .values({
           shortCode,
-          clickCount: 0, // 默认 clickCount
+          clickCount: previousClickCount,
         })
         .run()
     }

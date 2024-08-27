@@ -3,7 +3,10 @@ import { eq } from 'drizzle-orm'
 import { urls, urlAnalytics } from '~~/db/schema'
 
 export default defineEventHandler(async (event) => {
+  const { redirectUrl } = useRuntimeConfig()
   const { db, logger } = event.context
+
+  const prefix = `${redirectUrl}/api/urls/u`
 
   try {
     const shortCode = event.context.params?.shortCode
@@ -23,7 +26,7 @@ export default defineEventHandler(async (event) => {
 
     // 如果用户代理是社交媒体爬虫，重定向到 OpenGraph 页面
     if (userAgent.includes('facebookexternalhit') || userAgent.includes('twitterbot')) {
-      return sendRedirect(event, `/api/urls/${shortCode}/og`, 302)
+      return sendRedirect(event, `${prefix}/${shortCode}/og`, 302)
     }
 
     // 查询数据库中的短码信息
@@ -46,8 +49,8 @@ export default defineEventHandler(async (event) => {
 
     // 检查是否已过期
     if (expirationDate && Date.now() > expirationDate) {
-      await db?.delete(urls).where(eq(urls.shortCode, shortCode)).run()
-      logger.warn('Short code expired and deleted:', shortCode)
+      logger.warn('Short code expired:', shortCode)
+
       event.node.res.statusCode = 404
       return {
         code: 404,
@@ -91,7 +94,6 @@ export default defineEventHandler(async (event) => {
     // 重定向到目标 URL
     return sendRedirect(event, url, 302)
   } catch (error) {
-    logger.error('Error updating URL:', error)
     event.node.res.statusCode = 500
     let errorMessage = 'Internal Server Error'
     if (error instanceof Error) {

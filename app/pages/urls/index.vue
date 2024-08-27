@@ -16,6 +16,7 @@ interface Url {
   url: string
   shortCode?: string
   expiresIn?: string
+  expirationDate?: number | string
 }
 
 interface Urls {
@@ -26,11 +27,23 @@ interface Urls {
   ogTitle?: string // OG标题（可选）
   ogDescription?: string // OG描述（可选）
   ogImage?: string // OG图片URL（可选）
+
+  // 分析数据
+  analytics?: {
+    shortCode: string // 短链接
+    clickCount: number // 点击次数
+  }
 }
 
 interface ApiResponse {
   code: number
   data: Urls[]
+  message: string
+}
+
+interface ApiResponseA {
+  code: number
+  data: Urls['analytics']
   message: string
 }
 
@@ -75,7 +88,14 @@ async function handleLoading(callback: LoadingCallback) {
   }
 }
 
-function expandChange() {}
+async function expandChange(row: Urls, expandedRows: Urls[]) {
+  if (expandedRows.find((item) => item.id === row.id)) {
+    const { data } = await $fetch<ApiResponseA>(`/api/urls/analytics/${row.shortCode}`)
+
+    row.analytics = data
+    // row.analytics = Object.assign({}, data)
+  }
+}
 
 // 表单规则验证函数
 const validateCustomCode: FormItemRule['validator'] = (rule, value, callback) => {
@@ -116,6 +136,7 @@ async function saveOrUpdateUrl() {
     method: httpMethod,
     body: {
       ...urlsForm.value,
+      expiresIn: dayjs(urlsForm.value.expiresIn).valueOf(),
     },
   })
 }
@@ -126,7 +147,9 @@ function openUserDialog(urlRow?: Url) {
         id: urlRow.id,
         url: urlRow.url,
         shortCode: urlRow.shortCode,
-        expiresIn: dayjs(urlRow.expiresIn).format('YYYY-MM-DD HH:mm:ss'),
+        expiresIn: urlRow.expirationDate
+          ? dayjs(urlRow.expirationDate).format('YYYY-MM-DD HH:mm:ss')
+          : '',
       }
     : {
         id: 0,
@@ -194,15 +217,19 @@ loadUrlsData()
     <el-button type="primary" :icon="IconRefresh" circle @click="loadUrlsData" />
     <el-button type="primary" :icon="IconPlus" circle @click="openUserDialog()" />
   </div>
-  <el-table v-loading="isLoadingTable" :data="urlsList" @expand-change="expandChange">
+  <el-table
+    v-loading="isLoadingTable"
+    :data="urlsList"
+    :row-key="(row) => row.id"
+    @expand-change="expandChange"
+  >
     <el-table-column fixed="left" align="center" type="expand">
-      <template #default="props">
-        <div m="4">
-          <p m="t-0 b-2">State: {{ props.row.state }}</p>
-          <p m="t-0 b-2">City: {{ props.row.city }}</p>
-          <p m="t-0 b-2">Address: {{ props.row.address }}</p>
-          <p m="t-0 b-2">Zip: {{ props.row.zip }}</p>
-        </div>
+      <template #default="{ row: { analytics } }">
+        <el-descriptions title="Analytics" class="pl-18">
+          <el-descriptions-item label="Click Count :">
+            {{ analytics && analytics.clickCount ? analytics.clickCount : 0 }}
+          </el-descriptions-item>
+        </el-descriptions>
       </template>
     </el-table-column>
     <el-table-column fixed="left" align="center" prop="id" label="ID" width="80" />
@@ -300,7 +327,7 @@ loadUrlsData()
           type="datetime"
           placeholder="Select expiration date and time"
           format="YYYY/MM/DD HH:mm:ss"
-          value-format="x"
+          style="width: 100%"
           :disabled-date="disabledDate"
           :disabled-hours="() => disabledTimeHandler('hour')"
           :disabled-minutes="() => disabledTimeHandler('minute')"

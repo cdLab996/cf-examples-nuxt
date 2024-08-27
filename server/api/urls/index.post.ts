@@ -10,7 +10,6 @@ export default defineEventHandler(async (event) => {
   const prefix = `${redirectUrl}/api/urls/u`
 
   try {
-    const body = await readBody(event)
     const {
       url,
       shortCode: customCode,
@@ -18,7 +17,7 @@ export default defineEventHandler(async (event) => {
       ogTitle,
       ogDescription,
       ogImage,
-    } = body
+    } = await readBody(event)
 
     // 获取或解析 OpenGraph 元数据
     const ogMetadata =
