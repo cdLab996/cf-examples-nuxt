@@ -11,6 +11,12 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import dayjs from 'dayjs'
 import logger from '~~/app/composables/logger'
 
+interface ApiResponse<T = unknown> {
+  code: number
+  data: T
+  message: string
+}
+
 interface Url {
   id: number
   url: string
@@ -33,18 +39,6 @@ interface Urls {
     shortCode: string // 短链接
     clickCount: number // 点击次数
   }
-}
-
-interface ApiResponse {
-  code: number
-  data: Urls[]
-  message: string
-}
-
-interface ApiResponseA {
-  code: number
-  data: Urls['analytics']
-  message: string
 }
 
 type LoadingCallback = () => Promise<void>
@@ -73,7 +67,7 @@ const isEditingUser = computed(() => !!urlsForm.value.id)
 // Functions
 async function loadUrlsData() {
   await handleLoading(async () => {
-    const { data } = await $fetch<ApiResponse>('/api/urls')
+    const { data } = await $fetch<ApiResponse<Urls[]>>('/api/urls')
 
     urlsList.value = data || []
   })
@@ -90,10 +84,11 @@ async function handleLoading(callback: LoadingCallback) {
 
 async function expandChange(row: Urls, expandedRows: Urls[]) {
   if (expandedRows.find((item) => item.id === row.id)) {
-    const { data } = await $fetch<ApiResponseA>(`/api/urls/analytics/${row.shortCode}`)
+    const { data } = await $fetch<ApiResponse<Urls['analytics']>>(
+      `/api/urls/analytics/${row.shortCode}`
+    )
 
     row.analytics = data
-    // row.analytics = Object.assign({}, data)
   }
 }
 
@@ -176,9 +171,8 @@ function confirmUserDeletion(shortCode: string) {
 }
 
 async function deleteUrl(shortCode: string) {
-  const { code, message } = await $fetch<ApiResponse>('/api/urls', {
+  const { code, message } = await $fetch<ApiResponse>(`/api/urls/${shortCode}`, {
     method: 'DELETE',
-    body: { shortCode },
   })
   code === 0 && ElMessage.success(message || 'Delete completed')
 }
