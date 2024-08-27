@@ -31,11 +31,16 @@ export default defineEventHandler(async (event) => {
       data: [],
     }
   } catch (error) {
-    logger.error(`Error deleting URL with ShortCode ${shortCode}:`, error)
     event.node.res.statusCode = 500
+    let errorMessage = 'Internal Server Error'
+    if (error instanceof Error) {
+      errorMessage = error.message
+    }
+
     return {
       code: 500,
-      message: 'Internal Server Error',
+      message: errorMessage,
+      data: null,
     }
   }
 })
