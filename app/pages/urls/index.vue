@@ -113,27 +113,25 @@ async function submitUserForm() {
     if (!userFormRef.value) return
     await userFormRef.value.validate(async (isValid: boolean) => {
       if (isValid) {
-        await saveOrUpdateUrl()
-        ElMessage.success(`${isEditingUser.value ? 'Edit' : 'Create'} completed`)
-        isDialogVisible.value = false
-        await loadUrlsData()
+        const { code, message } = await $fetch<ApiResponse>('/api/urls', {
+          method: isEditingUser.value ? 'PUT' : 'POST',
+          body: {
+            ...urlsForm.value,
+            expiresIn: dayjs(urlsForm.value.expiresIn).valueOf(),
+          },
+        })
+        if (code === 0) {
+          ElMessage.success(`${isEditingUser.value ? 'Edit' : 'Create'} completed`)
+          isDialogVisible.value = false
+          await loadUrlsData()
+        } else {
+          ElMessage.error(message || 'Save failed')
+        }
       }
     })
   } finally {
     isSubmitting.value = false
   }
-}
-
-async function saveOrUpdateUrl() {
-  const apiUrl = '/api/urls'
-  const httpMethod = isEditingUser.value ? 'PUT' : 'POST'
-  await $fetch<ApiResponse>(apiUrl, {
-    method: httpMethod,
-    body: {
-      ...urlsForm.value,
-      expiresIn: dayjs(urlsForm.value.expiresIn).valueOf(),
-    },
-  })
 }
 
 function openUserDialog(urlRow?: Url) {

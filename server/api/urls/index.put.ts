@@ -52,9 +52,13 @@ export default defineEventHandler(async (event) => {
         .get()
 
       if (shortCodeExists) {
-        logger.warn('Short code already exists:', shortCode)
-        event.node.res.statusCode = 409 // Conflict
-        throw new Error('Short code already exists')
+        logger.warn('Short code already exists: ', shortCode)
+
+        return {
+          code: 409,
+          message: 'Short code already exists: ' + shortCode,
+          data: null,
+        }
       }
 
       // 获取当前的 clickCount 并保存为 previousClickCount
