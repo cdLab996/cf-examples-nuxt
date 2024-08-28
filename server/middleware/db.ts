@@ -16,12 +16,14 @@ function initializeDrizzle(event: H3Event<EventHandlerRequest>) {
       const { DB = '' } = event.context.cloudflare?.env || {}
       if (!DB) {
         logger.error('D1 database not found')
+        return null
         // return useDatabase()
       }
       return drizzleD1(DB, { schema })
     }
     default: {
       logger.error(`Unsupported DB type: ${dbType}`)
+      return null
       // return useDatabase()
     }
   }
